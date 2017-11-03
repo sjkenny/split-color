@@ -1,3 +1,7 @@
+% iterates through molecules and finds initial matches to generate tform
+% between two molecule lists
+
+
 clearvars -except LastFolder DistanceRight1;
 if exist('LastFolder','var')
     GetFileName=sprintf('%s/*.bin',LastFolder);
@@ -10,10 +14,12 @@ end
 ShiftX=0; %Inital shift, necessary if centers of the two views are not well aligned
 ShiftY=0; %Inital shift, necessary if centers of the two views are not well aligned
 MatchDistanceMax=7; %The max shift from center allowed (in pixels). Choose ~7.
-TolSigma=4; %Tolenrance btw two views. Choose ~4.
-CheckWarpJumpFr=100; %Only align the data every x frames; otherwise too many moelcues to map.
+TolSigma=4; %Tolerance btw two views. Choose ~4.
+CheckWarpJumpFr=100; %Only align the data every x frames; otherwise too many molecues to map.
 
-%-------------------------
+warpfile = sprintf('tardis_splitplane_map_090616.mat'); %The standard warping file used for initnial alignment
+
+%------------------------- load files
 [FileNameL,PathNameL] = uigetfile(GetFileName,'Select the L bin file to map');
 GetFileName=sprintf('%s/*.bin',PathNameL);
 [FileNameR,PathNameR] = uigetfile(GetFileName,'Select the R bin file to map');
@@ -27,17 +33,11 @@ filehead = LeftFile(1:end-4);
 filehead2 = RightFile(end-FileNameRLen:end-4);
 ReverseZ=1;  %!!!!!!!!!!!!!!!!!!!!Use "1" here if want to reverse z
 
-readbin = 1;
-is3D = 0;
+% we currently don't use these
+% readbin = 1;
+% is3D = 0;
 
 increasecat = 1;    % 1 to make category +1, 0 for no change in category
-
-%warpfile = 'tform_tmp.mat';%'STORM_warp_std.mat'; %The standard warping file used for initnial alignment
-
-warpfile = sprintf('tardis_splitplane_map_090616.mat'); %The standard warping file used for initnial alignment
-
-
-%OutFilePairs = sprintf('%s_FoundPairs.txt',filehead);
 
 load(warpfile);
 
@@ -51,13 +51,13 @@ by = double(r.y);
 Nr = size(r.x,1);
 
 fprintf(1,'warping using std...\n');
-if (is3D)
-    % Warping in 3D
-    bz = r.z;
-    [tx,ty,tz] = tforminv(tform,bx,by,bz);
-else
+% if (is3D)
+%     % Warping in 3D
+%     bz = r.z;
+%     [tx,ty,tz] = tforminv(tform,bx,by,bz);
+% else
     [tx,ty] = tforminv(tform,bx,by);
-end
+% end
 
 
 fprintf(1,'Rough shifting...\n');

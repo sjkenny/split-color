@@ -1,10 +1,13 @@
 % clear;
 
+%
 ComponentLZ=.4; 
 CompomentRZ=1-ComponentLZ;
 
 IntensityRatioTh=2.3888;
-IntensityRatioLower=0.5;
+IntensityRatioUpper=2.3;
+IntensityRatioLower=1.85;
+IntensityRatio1=1.7;
 IfAvergaeCoordinates=0;
 
 IfWriteResult=1;
@@ -12,7 +15,7 @@ IfWriteZdiff=0;
 IfWriteZCor=0;
 IfWriteZConcise=0;
 
-SkipData=10; %Use 1 for non-skip
+SkipData=1; %Use 1 for non-skip
 
 RejectStart=0;
 RejectEnd=0;
@@ -37,7 +40,7 @@ DisplayFrame=1000;
 ZTolPlus= 1480;
 ZTolMinus=-1270;
 
-outfile = sprintf('%s_Split.bin',filehead);
+outfile = sprintf('%s_Split_H%g.bin',filehead,XTol);
 
 bx=double(rMolAll.x);
 by=double(rMolAll.y);
@@ -66,6 +69,8 @@ NumofNotSameFrame=0;
 % NumLeft=1000;
 % MatchList=[];
 IndicesC=[];
+LeftIntensity=[];
+RightIntensity=[];
 
 
 % ZDiffList=zeros(min(NumLeft,NumRight),1);
@@ -270,35 +275,28 @@ for i=1+RejectStart:SkipData:NumLeft-RejectEnd
         SplitData.z(i)=MergedZ;
     end    
 %     MergedList(NumofMatch,:)=[SplitData.cat(i) MergedX MergedY MergedX MergedY Left.h(i) Left.area(i) Left.width(i) ComponentLX ComponentLY ZDiff MergedI Left.frame(i) Left.length(i) Left.link(i) Left.valid(i) MergedZ MergedZ];
-    LeftIntensity(i)=Left.I(i);
-    RightIntensity(i)=Right.I(RMatchedMolecule);
-    
+%     LeftIntensity(i)=Left.I(i);
+%     RightIntensity(i)=Right.I(RMatchedMolecule);
     
     IntensityRatio=Left.I(i)/Right.I(RMatchedMolecule);
     SplitData.Ax(i)=IntensityRatio;
     SplitData.area(i)=Right.I(RMatchedMolecule);
-    
+     
     if IntensityRatio>IntensityRatioTh
         SplitData.cat(i)=0;
-%     elseif IntensityRatio<IntensityRatioTh & IntensityRatio>IntensityRatioLower
+%     elseif IntensityRatio<IntensityRatioUpper & IntensityRatio>IntensityRatioLower
 %          SplitData.cat(i)=3;
-    else
+    elseif IntensityRatio<IntensityRatioTh
         SplitData.cat(i)=1;
+    else
+        SplitData.cat(i)=9;
     end
     
 end
 
-a=25;
+% a=25;
 % figure(1)
-% plot(RightIntensity,LeftIntensity,'.','MarkerSize',4)
-% xlim([0 70000])
-% ylim([0 70000])
-% xlabel('Intensity (left)')
-% ylabel('Intensity (right)')
-% (RightIntensity+LeftIntensity/numel(RightIntensity));
+% scatter(RightIntensity,LeftIntensity,a,'filled')
+fprintf(1,'Writing to file...\n');
 
-
-
-%fprintf(1,'Writing to file...\n');
-
-%WriteMolBinN(SplitData,outfile);
+WriteMolBinN(SplitData,outfile);

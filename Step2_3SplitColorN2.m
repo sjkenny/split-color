@@ -1,13 +1,16 @@
-% clear;
+% warps molecule list according to tform generated in step 1
+% iterates through all matched molecules and gives color assignment
 
 
+% these are used to compute output intensity for each molecule
 ComponentLZ=.4; 
 CompomentRZ=1-ComponentLZ;
 
-IntensityRatioTh=2.3888;
-IntensityRatioUpper=2.3;
-IntensityRatioLower=1.85;
-IntensityRatio1=1.7;
+% intensity ratio for color assignment - this does 3 category
+% classification - matched molecules above IntensityRatioTh are Cat 0,
+% otherwise if below, Cat 1 (647); non-matched molecules are Cat 2 (680)
+IntensityRatioTh=2.38;
+
 IfAvergaeCoordinates=0;
 
 IfWriteResult=1;
@@ -26,6 +29,8 @@ IfRead2ndImg=0;
 IfRead1stImg=0;
 
 FrameTol=0;
+
+%X and Y tolerance in pixels for molecule matching
 XTol=1; %pix0
 YTol=1; %pix !!!!!!!!!!!!!!!!!!!!!
 
