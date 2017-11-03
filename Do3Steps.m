@@ -1,7 +1,8 @@
 %All-in-one split color analysis
 
 %Need:
-%   - .bin molecule list split into left and right halves
+%   - .bin molecule list split into left and right halves (add
+%   SplitOneSubFolder to path and run)
 %   - standard warp file generated between the two halves as a tform struct
 
 %Usage:
